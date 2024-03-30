@@ -1,0 +1,19 @@
+# .gitignore
+
+# Ignore the Conda environment directory
+/.conda/
+
+# Ignore Python build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore data files
+data/
