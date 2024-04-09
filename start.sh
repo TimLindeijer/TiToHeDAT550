@@ -2,7 +2,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --partition=gpuA100
 #SBATCH --nodelist=gorina8 
-#SBATCH --time=30:00:00
+#SBATCH --time=10:00:00
 #SBATCH --job-name=g7Dat550
 #SBATCH --output=main.out
  
