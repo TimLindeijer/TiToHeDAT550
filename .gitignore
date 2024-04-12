@@ -17,3 +17,6 @@ __pycache__/
 
 # Ignore data files
 data/
+
+# Ignore results folder
+results_*/
