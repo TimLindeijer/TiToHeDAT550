@@ -4,15 +4,19 @@ import os
 import zipfile
 import json
 
-from torch.optim import AdamW
 from PIL import Image
+import requests
 import torch
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
-from transformers import CLIPProcessor, CLIPModel, RobertaTokenizer, RobertaForSequenceClassification, TrainingArguments, Trainer
+from transformers import CLIPProcessor, CLIPModel, CLIPConfig
+from transformers import TrainingArguments, Trainer
 from sklearn.model_selection import train_test_split
 import numpy as np
-from torch.utils.data import Dataset
+from torch.utils.data import DataLoader, Dataset
+from torch.optim import AdamW
+
+
 ### ZIP EXCTRACTION ###
 
 folder_path = 'data/CT23_1A_checkworthy_multimodal_english_v2'
@@ -35,111 +39,146 @@ train_path = folder_path + '/CT23_1A_checkworthy_multimodal_english_train.jsonl'
 test_path = folder_path + '/CT23_1A_checkworthy_multimodal_english_test.jsonl'
 
 def split_json(data):
-    text_data = {
-        'tweet_id': data['tweet_id'],
-        'tweet_url': data['tweet_url'],
-        'text': data['tweet_text'] + data['ocr_text'],
-        'class_label': data['class_label']
-    }
-
     image_data = {
-        'tweet_id': data['tweet_id'],
-        'tweet_url': data['tweet_url'],
-        'class_label': data['class_label'],
-        'image_path': data['image_path'],
-        'image_url': data['image_url']
+        'text': data['tweet_text'] + data['ocr_text'],
+        'label': data['class_label'],
+        'image_path': data['image_path']
+        # 'url': data['image_url']
     }
 
-    return text_data, image_data
+    return image_data
 
 ### READ AND SPLIT DATA ###
 
 # Read data from the folder
 def read_data(file_path):
     print('Reading data')
-    text_data = []
     image_data = []
     with open(file_path, 'r') as file:
         for line in file:
             json_obj = json.loads(line)
-            text, image = split_json(json_obj)
-            text_data.append(text)
+            image = split_json(json_obj)
             image_data.append(image)
     print('Finished reading data')
-    return text_data, image_data
+    return image_data
 
-train_text_data, train_image_data = read_data(train_path)
+train_image_data = read_data(train_path)
+
+# Convert labels to numerical values
+le = LabelEncoder()
+
+# Fit the encoder on the class labels and transform them
+labels = [data['label'] for data in train_image_data]
+le.fit(labels)
+numerical_labels = le.transform(labels)
+
+# Replace the class_label in each data dictionary with its numerical equivalent
+for data, num_label in zip(train_image_data, numerical_labels):
+    data['label'] = num_label
 # print(f'Text: {train_text_data[0]}')
 # print(f'Image: {train_image_data[0]}')
 
 ### PREPARE DATA ###
 print('Preparing data')
 
-# Prepare the data
-labels = [data['class_label'] for data in train_text_data]  # You need to have labels for your training data
+class CLIPDataset(torch.utils.data.Dataset):
+    def __init__(self, data, folder_path):
+        self.data = data
+        self.folder_path = folder_path
+        self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
-images = []
-for data in train_image_data:
-    with Image.open(folder_path + '/' + data['image_path']) as img:
-        images.append(img.copy())
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        item = self.data[idx]
+        image_path = os.path.join(self.folder_path, item["image_path"])
+        try:
+            image = Image.open(image_path).convert('RGBA')
+        except Exception as e:
+            print(f"Error loading image at path: {image_path}")
+            print(e)
+            # Return None or a placeholder image
+            image = Image.new('RGBA', (224, 224))  # Placeholder image
+        pixel_values = self.processor(images=image, return_tensors="pt").pixel_values
+        input_ids = self.processor(text=item["text"], return_tensors="pt", padding="max_length", max_length=77, truncation=True).input_ids
+        label = torch.tensor(item["label"])
+        return {
+            "pixel_values": pixel_values.squeeze(),
+            "input_ids": input_ids.squeeze(),
+            "label": label
+        }
+
+
+
 
 # Split the data into training and validation sets
-train_labels, val_labels, train_images, val_images = train_test_split(
-    labels, images, test_size=0.2, random_state=42
+train_data, val_data = train_test_split(
+    train_image_data, test_size=0.2, random_state=42
 )
 
-# Convert labels to numerical values
-le = LabelEncoder()
-train_labels_num = le.fit_transform(train_labels)
-val_labels_num = le.transform(val_labels)
+train_dataset = CLIPDataset(train_data, folder_path)
+val_dataset = CLIPDataset(val_data, folder_path)
+
+
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=32, shuffle=True)
+val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=32)
 
 # CLIP ViT model
-clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 
-# Process the inputs
-inputs_image_train = clip_processor(images=[img.convert("RGBA") for img in train_images], return_tensors="pt")
-
-inputs_image_val = clip_processor(images=[img.convert("RGBA") for img in val_images], return_tensors="pt")
-
-# Define the optimizers
-optimizer_clip = AdamW(clip_model.parameters(), lr=1e-5)
-
-# Compute metrics function for evaluation
-def compute_metrics(p):
-    preds = np.argmax(p.predictions, axis=1)
-    labels = p.label_ids
-    precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='binary')
-    acc = accuracy_score(labels, preds)
-    return {"accuracy": acc, "f1": f1, "precision": precision, "recall": recall}
-
-training_args_clip = TrainingArguments(
-    output_dir='./results_clip',
-    num_train_epochs=10,
-    per_device_train_batch_size=16,
-    per_device_eval_batch_size=8,
-    warmup_steps=10,
-    weight_decay=0.01,
-    logging_dir='./logs',
-    logging_steps=1000,
-    evaluation_strategy="epoch",  # Evaluate at the end of every epoch
+# Define the fine-tuning configuration
+config = CLIPConfig(
+    text_config=model.text_model.config.to_dict(),
+    vision_config=model.vision_model.config.to_dict(),
+    projection_dim=512,
+    logit_scale_init_value=2.6592,
 )
 
-# Create a Trainer for CLIP
-trainer_clip = Trainer(
-    model=clip_model,
-    args=training_args_clip,
-    train_dataset=inputs_image_train,
-    eval_dataset=inputs_image_val,
-    compute_metrics=compute_metrics,
-)
+# Instantiate the fine-tuned CLIP model
+fine_tuned_model = CLIPModel(config)
 
+# Freeze the pre-trained model parameters
+for param in fine_tuned_model.parameters():
+    param.requires_grad = False
 
-# Train the models
-trainer_clip.train()
+# Define the fine-tuning head
+# fine_tuned_model.classification_head = torch.nn.Linear(config.projection_dim, 2)
+fine_tuned_model.classification_head = torch.nn.Linear(1024, 1)
+# Define the optimizer and training loop
+optimizer = AdamW(fine_tuned_model.classification_head.parameters(), lr=5e-5)
+loss_fn = torch.nn.BCEWithLogitsLoss()
 
-# Evaluate the models
-eval_result_clip = trainer_clip.evaluate()
+for epoch in range(10):
+    fine_tuned_model.train()
+    train_loss = 0
+    for batch in train_loader:
+        optimizer.zero_grad()
+        outputs = fine_tuned_model(pixel_values=batch["pixel_values"], input_ids=batch["input_ids"])
+        combined_embeds = torch.cat((outputs.image_embeds, outputs.text_embeds), dim=1)
+        logits = fine_tuned_model.classification_head(combined_embeds)
+        
+        loss = loss_fn(logits.view(-1), batch["label"].float())
+        loss.backward()
+        optimizer.step()
+        train_loss += loss.item()
+    
+    # Print average training loss per epoch
+    print(f"Epoch {epoch+1}, Loss: {train_loss / len(train_loader)}")
 
-# Print the evaluation results
-print(f"Eval result for CLIP: {eval_result_clip}")
+    # Evaluation phase
+    fine_tuned_model.eval()
+    total_correct = 0
+    total_count = 0
+    with torch.no_grad():
+        for batch in val_loader:
+            outputs = fine_tuned_model(pixel_values=batch["pixel_values"], input_ids=batch["input_ids"])
+            combined_embeds = torch.cat((outputs.image_embeds, outputs.text_embeds), dim=1)
+            logits = fine_tuned_model.classification_head(combined_embeds)
+        
+            preds = torch.sigmoid(logits.view(-1)) > 0.5  # Get binary predictions
+            total_correct += (preds == batch["label"]).sum().item()
+            total_count += preds.size(0)
+    
+    # Print validation accuracy
+    print(f"Validation Accuracy: {total_correct / total_count}")

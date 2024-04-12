@@ -1,0 +1,40 @@
+CUDA is a parallel computing platform for computing on GPUs, https://developer.nvidia.com/cuda-toolkit
+prepending to __UENV: cuda-11.4.4
+setting env CUDA_HOME=/usr/local/_cuda/cuda-11.4.4_ubuntu20
+prepending to PATH: /usr/local/_cuda/cuda-11.4.4_ubuntu20/bin
+prepending to LD_LIBRARY_PATH: /usr/local/_cuda/cuda-11.4.4_ubuntu20/lib64
+
+
+A GPU-accelerated library of primitives for deep neural networks, https://developer.nvidia.com/cudnn
+prepending to __UENV: cudnn-11.4-8.2.4
+prepending to LD_LIBRARY_PATH: /usr/local/libcudnn-11.4-8.2.4/cuda/lib64
+
+
+
+Zip file extraction started
+Zip file extracted
+Reading data
+Finished reading data
+Preparing data
+/home/stud/timlin/.conda/envs/torch550/lib/python3.11/site-packages/PIL/Image.py:1000: UserWarning: Palette images with Transparency expressed in bytes should be converted to RGBA images
+  warnings.warn(
+Epoch 1, Loss: 0.6911091632762197
+Validation Accuracy: 0.6165254237288136
+Epoch 2, Loss: 0.6800386521775844
+Validation Accuracy: 0.6165254237288136
+Epoch 3, Loss: 0.6707338145223715
+Validation Accuracy: 0.6165254237288136
+Epoch 4, Loss: 0.6634159320491856
+Validation Accuracy: 0.6165254237288136
+Epoch 5, Loss: 0.6575165593017966
+Validation Accuracy: 0.6165254237288136
+Epoch 6, Loss: 0.6527336361044545
+Validation Accuracy: 0.6165254237288136
+Epoch 7, Loss: 0.6493742162898436
+Validation Accuracy: 0.6165254237288136
+Epoch 8, Loss: 0.6463965308868279
+Validation Accuracy: 0.6165254237288136
+Epoch 9, Loss: 0.6442067845393036
+Validation Accuracy: 0.6165254237288136
+Epoch 10, Loss: 0.6425605628450038
+Validation Accuracy: 0.6165254237288136
