@@ -3,8 +3,8 @@
 #SBATCH --partition=gpuA100
 #SBATCH --nodelist=gorina8 
 #SBATCH --time=10:00:00
-#SBATCH --job-name=g7Dat550
-#SBATCH --output=main.out
+#SBATCH --job-name=clip_only
+#SBATCH --output=outputs/clip_only.out
  
 # Activate environment
 uenv verbose cuda-11.4.4 cudnn-11.4-8.2.4
@@ -13,4 +13,4 @@ conda activate torch550
 PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 
 # Run the Python script that uses the GPU
-python -u main.py
+python -u clip_train.py
