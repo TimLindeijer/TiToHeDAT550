@@ -124,22 +124,20 @@ training_args_roberta = TrainingArguments(
 
 # Define a dataset
 class TextImageDataset(Dataset):
-    def __init__(self, encodings_text, encodings_image, labels):
+    def __init__(self, encodings_text, labels):
         self.encodings_text = encodings_text
-        self.encodings_image = encodings_image
         self.labels = torch.tensor(labels)
 
     def __getitem__(self, idx):
         item = {key: torch.clone(val[idx]) for key, val in self.encodings_text.items()}
-        item.update({key: torch.clone(val[idx]) for key, val in self.encodings_image.items()})
         item['labels'] = self.labels[idx]
         return item
 
     def __len__(self):
         return len(self.labels)
 
-train_dataset = TextImageDataset(inputs_text_train, inputs_image_train, train_labels_num)
-val_dataset = TextImageDataset(inputs_text_val, inputs_image_val, val_labels_num)
+train_dataset = TextImageDataset(inputs_text_train, train_labels_num)
+val_dataset = TextImageDataset(inputs_text_val, val_labels_num)
 
 
 # Create a Trainer for RoBERTa
