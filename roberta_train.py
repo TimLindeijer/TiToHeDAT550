@@ -112,7 +112,7 @@ def compute_metrics(p):
 # Define training arguments
 training_args_roberta = TrainingArguments(
     output_dir='./results_roberta',
-    num_train_epochs=10,
+    num_train_epochs=90,
     per_device_train_batch_size=16,
     per_device_eval_batch_size=8,
     warmup_steps=10,

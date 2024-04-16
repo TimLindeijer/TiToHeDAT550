@@ -1,0 +1,198 @@
+CUDA is a parallel computing platform for computing on GPUs, https://developer.nvidia.com/cuda-toolkit
+prepending to __UENV: cuda-11.4.4
+setting env CUDA_HOME=/usr/local/_cuda/cuda-11.4.4_ubuntu20
+prepending to PATH: /usr/local/_cuda/cuda-11.4.4_ubuntu20/bin
+prepending to LD_LIBRARY_PATH: /usr/local/_cuda/cuda-11.4.4_ubuntu20/lib64
+
+
+A GPU-accelerated library of primitives for deep neural networks, https://developer.nvidia.com/cudnn
+prepending to __UENV: cudnn-11.4-8.2.4
+prepending to LD_LIBRARY_PATH: /usr/local/libcudnn-11.4-8.2.4/cuda/lib64
+
+
+
+Zip file extraction started
+Zip file extracted
+Reading data
+Finished reading data
+Preparing data
+Epoch 1, Loss: 0.6475674914101422
+Validation Accuracy: 0.6165254237288136
+Epoch 2, Loss: 0.6322421492156336
+Validation Accuracy: 0.6165254237288136
+Epoch 3, Loss: 0.6270341145790229
+Validation Accuracy: 0.6165254237288136
+Epoch 4, Loss: 0.6216651777089652
+Validation Accuracy: 0.6165254237288136
+Epoch 5, Loss: 0.6181883226006718
+Validation Accuracy: 0.614406779661017
+Epoch 6, Loss: 0.6137883582357633
+Validation Accuracy: 0.6165254237288136
+Epoch 7, Loss: 0.608928345017514
+Validation Accuracy: 0.6165254237288136
+Epoch 8, Loss: 0.6052475283711644
+Validation Accuracy: 0.6165254237288136
+Epoch 9, Loss: 0.6021844668913696
+Validation Accuracy: 0.6165254237288136
+Epoch 10, Loss: 0.5988371756117222
+Validation Accuracy: 0.625
+Epoch 11, Loss: 0.5958917252087997
+Validation Accuracy: 0.6461864406779662
+Epoch 12, Loss: 0.5932599275799121
+Validation Accuracy: 0.6567796610169492
+Epoch 13, Loss: 0.5913132514994023
+Validation Accuracy: 0.6440677966101694
+Epoch 14, Loss: 0.5888878177788298
+Validation Accuracy: 0.6483050847457628
+Epoch 15, Loss: 0.5865974613165451
+Validation Accuracy: 0.6610169491525424
+Epoch 16, Loss: 0.5851446809404988
+Validation Accuracy: 0.6716101694915254
+Epoch 17, Loss: 0.5829658311302379
+Validation Accuracy: 0.6483050847457628
+Epoch 18, Loss: 0.5803484467126555
+Validation Accuracy: 0.673728813559322
+Epoch 19, Loss: 0.5794183798765732
+Validation Accuracy: 0.6716101694915254
+Epoch 20, Loss: 0.578523202972897
+Validation Accuracy: 0.6673728813559322
+Epoch 21, Loss: 0.5756231086739039
+Validation Accuracy: 0.684322033898305
+Epoch 22, Loss: 0.5743799159082316
+Validation Accuracy: 0.6779661016949152
+Epoch 23, Loss: 0.57327101139699
+Validation Accuracy: 0.6927966101694916
+Epoch 24, Loss: 0.5725271237098565
+Validation Accuracy: 0.6927966101694916
+Epoch 25, Loss: 0.5708718850451001
+Validation Accuracy: 0.701271186440678
+Epoch 26, Loss: 0.5693820012828051
+Validation Accuracy: 0.6927966101694916
+Epoch 27, Loss: 0.5688081383705139
+Validation Accuracy: 0.690677966101695
+Epoch 28, Loss: 0.5667254116575596
+Validation Accuracy: 0.7076271186440678
+Epoch 29, Loss: 0.5667498429953042
+Validation Accuracy: 0.7033898305084746
+Epoch 30, Loss: 0.5650065223039207
+Validation Accuracy: 0.7033898305084746
+Epoch 31, Loss: 0.5641814268241494
+Validation Accuracy: 0.6970338983050848
+Epoch 32, Loss: 0.5640779910451275
+Validation Accuracy: 0.7076271186440678
+Epoch 33, Loss: 0.5625356895438696
+Validation Accuracy: 0.7076271186440678
+Epoch 34, Loss: 0.5616396165500253
+Validation Accuracy: 0.7055084745762712
+Epoch 35, Loss: 0.5613393500699835
+Validation Accuracy: 0.7055084745762712
+Epoch 36, Loss: 0.5612103822877852
+Validation Accuracy: 0.7076271186440678
+Epoch 37, Loss: 0.5591655727160179
+Validation Accuracy: 0.7076271186440678
+Epoch 38, Loss: 0.5591667451090732
+Validation Accuracy: 0.7055084745762712
+Epoch 39, Loss: 0.5576126216831854
+Validation Accuracy: 0.7076271186440678
+Epoch 40, Loss: 0.5572520474256095
+Validation Accuracy: 0.7055084745762712
+Epoch 41, Loss: 0.5561440607248727
+Validation Accuracy: 0.7097457627118644
+Epoch 42, Loss: 0.5557010759741573
+Validation Accuracy: 0.7076271186440678
+Epoch 43, Loss: 0.5548295595888364
+Validation Accuracy: 0.711864406779661
+Epoch 44, Loss: 0.5545578639386064
+Validation Accuracy: 0.7139830508474576
+Epoch 45, Loss: 0.55332860249584
+Validation Accuracy: 0.711864406779661
+Epoch 46, Loss: 0.5535338329056562
+Validation Accuracy: 0.711864406779661
+Epoch 47, Loss: 0.5529150609242715
+Validation Accuracy: 0.7097457627118644
+Epoch 48, Loss: 0.5525487277467372
+Validation Accuracy: 0.7097457627118644
+Epoch 49, Loss: 0.5514387412596558
+Validation Accuracy: 0.7139830508474576
+Epoch 50, Loss: 0.5505963180024745
+Validation Accuracy: 0.7161016949152542
+Epoch 51, Loss: 0.5497561768960144
+Validation Accuracy: 0.7161016949152542
+Epoch 52, Loss: 0.5493143463538865
+Validation Accuracy: 0.7076271186440678
+Epoch 53, Loss: 0.5488388710102793
+Validation Accuracy: 0.7097457627118644
+Epoch 54, Loss: 0.5485925932051772
+Validation Accuracy: 0.7161016949152542
+Epoch 55, Loss: 0.5484336720684827
+Validation Accuracy: 0.711864406779661
+Epoch 56, Loss: 0.5473202512425891
+Validation Accuracy: 0.7076271186440678
+Epoch 57, Loss: 0.5473094612865125
+Validation Accuracy: 0.7076271186440678
+Epoch 58, Loss: 0.546273774514764
+Validation Accuracy: 0.7139830508474576
+Epoch 59, Loss: 0.5462988200834242
+Validation Accuracy: 0.711864406779661
+Epoch 60, Loss: 0.5458366188962581
+Validation Accuracy: 0.722457627118644
+Epoch 61, Loss: 0.5452049758474705
+Validation Accuracy: 0.711864406779661
+Epoch 62, Loss: 0.5447817454903813
+Validation Accuracy: 0.7161016949152542
+Epoch 63, Loss: 0.5439864871865612
+Validation Accuracy: 0.7097457627118644
+Epoch 64, Loss: 0.5440839766445806
+Validation Accuracy: 0.711864406779661
+Epoch 65, Loss: 0.5428278335070206
+Validation Accuracy: 0.7182203389830508
+Epoch 66, Loss: 0.542867661027585
+Validation Accuracy: 0.711864406779661
+Epoch 67, Loss: 0.5421242117881775
+Validation Accuracy: 0.711864406779661
+Epoch 68, Loss: 0.5416276687282627
+Validation Accuracy: 0.711864406779661
+Epoch 69, Loss: 0.541581779213275
+Validation Accuracy: 0.711864406779661
+Epoch 70, Loss: 0.5411053421133656
+Validation Accuracy: 0.711864406779661
+Epoch 71, Loss: 0.5401847387774515
+Validation Accuracy: 0.7182203389830508
+Epoch 72, Loss: 0.5400477920548391
+Validation Accuracy: 0.7139830508474576
+Epoch 73, Loss: 0.5395042416402849
+Validation Accuracy: 0.7139830508474576
+Epoch 74, Loss: 0.5400493321782451
+Validation Accuracy: 0.7139830508474576
+Epoch 75, Loss: 0.5396969277979964
+Validation Accuracy: 0.7161016949152542
+Epoch 76, Loss: 0.5381265782703788
+Validation Accuracy: 0.711864406779661
+Epoch 77, Loss: 0.5387530579405316
+Validation Accuracy: 0.7182203389830508
+Epoch 78, Loss: 0.5377596066159717
+Validation Accuracy: 0.722457627118644
+Epoch 79, Loss: 0.5375761834241576
+Validation Accuracy: 0.7203389830508474
+Epoch 80, Loss: 0.5371301750005302
+Validation Accuracy: 0.7161016949152542
+Epoch 81, Loss: 0.5368753878747002
+Validation Accuracy: 0.7182203389830508
+Epoch 82, Loss: 0.5362023433386269
+Validation Accuracy: 0.722457627118644
+Epoch 83, Loss: 0.5369892292103525
+Validation Accuracy: 0.7203389830508474
+Epoch 84, Loss: 0.5360493811510377
+Validation Accuracy: 0.7203389830508474
+Epoch 85, Loss: 0.5357497612298545
+Validation Accuracy: 0.7182203389830508
+Epoch 86, Loss: 0.5347990605790737
+Validation Accuracy: 0.7182203389830508
+Epoch 87, Loss: 0.5340494791329917
+Validation Accuracy: 0.7203389830508474
+Epoch 88, Loss: 0.5343055214922307
+Validation Accuracy: 0.7161016949152542
+Epoch 89, Loss: 0.534171746949018
+Validation Accuracy: 0.722457627118644
+Epoch 90, Loss: 0.5338406618368827
+Validation Accuracy: 0.722457627118644
