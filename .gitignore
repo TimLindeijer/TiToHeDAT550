@@ -23,3 +23,6 @@ results_*/
 
 # Ignore wandb
 wandb/
+
+# Ignore weights
+clip_only_90_epochs/
