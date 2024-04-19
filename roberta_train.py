@@ -3,7 +3,7 @@
 import os
 import zipfile
 import json
-
+import wandb
 from torch.optim import AdamW
 from PIL import Image
 import torch
@@ -91,7 +91,7 @@ val_labels_num = le.transform(val_labels)
 
 # RoBERTa model
 roberta_tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
-roberta_model = RobertaForSequenceClassification.from_pretrained('roberta-base', num_labels=len(labels))
+roberta_model = RobertaForSequenceClassification.from_pretrained('roberta-base', num_labels=len(set(labels)))
 
 # Process the inputs
 inputs_text_train = roberta_tokenizer(train_texts, return_tensors="pt", padding=True, truncation=True, max_length=512)
@@ -100,30 +100,8 @@ inputs_text_val = roberta_tokenizer(val_texts, return_tensors="pt", padding=True
 
 # Define the optimizers
 optimizer_roberta = AdamW(roberta_model.parameters(), lr=1e-5)
-
-# Compute metrics function for evaluation
-def compute_metrics(p):
-    preds = np.argmax(p.predictions, axis=1)
-    labels = p.label_ids
-    precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='binary')
-    acc = accuracy_score(labels, preds)
-    return {"accuracy": acc, "f1": f1, "precision": precision, "recall": recall}
-
-# Define training arguments
-training_args_roberta = TrainingArguments(
-    output_dir='./results_roberta',
-    num_train_epochs=90,
-    per_device_train_batch_size=16,
-    per_device_eval_batch_size=8,
-    warmup_steps=10,
-    weight_decay=0.01,
-    logging_dir='./logs',
-    logging_steps=1000,
-    evaluation_strategy="epoch",  # Evaluate at the end of every epoch
-)
-
 # Define a dataset
-class TextImageDataset(Dataset):
+class TextDataset(Dataset):
     def __init__(self, encodings_text, labels):
         self.encodings_text = encodings_text
         self.labels = torch.tensor(labels)
@@ -136,8 +114,34 @@ class TextImageDataset(Dataset):
     def __len__(self):
         return len(self.labels)
 
-train_dataset = TextImageDataset(inputs_text_train, train_labels_num)
-val_dataset = TextImageDataset(inputs_text_val, val_labels_num)
+train_dataset = TextDataset(inputs_text_train, train_labels_num)
+val_dataset = TextDataset(inputs_text_val, val_labels_num)
+
+wandb.init(project="dat550-multimodal", name="roberta-only-10epochs")
+
+# Compute metrics function for evaluation
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    preds = np.argmax(logits, axis=-1)
+    correct = np.sum(preds == labels)
+    total = len(labels)
+    return {"accuracy": correct / total}
+
+# Define training arguments
+training_args_roberta = TrainingArguments(
+    output_dir='./results_roberta',
+    num_train_epochs=10,
+    per_device_train_batch_size=16,
+    per_device_eval_batch_size=8,
+    warmup_steps=10,
+    weight_decay=0.01,
+    logging_dir='./logs',
+    logging_steps=1000,
+    evaluation_strategy="epoch",  # Evaluate at the end of every epoch
+    report_to="wandb"
+)
+
+
 
 
 # Create a Trainer for RoBERTa
@@ -147,6 +151,7 @@ trainer_roberta = Trainer(
     train_dataset=train_dataset,
     eval_dataset=val_dataset,
     compute_metrics=compute_metrics,
+    optimizers=(optimizer_roberta, None)  # We pass the optimizer to use it for the loss calculation
 )
 
 
@@ -158,3 +163,11 @@ eval_result_roberta = trainer_roberta.evaluate()
 
 # Print the evaluation results
 print(f"Eval result for RoBERTa: {eval_result_roberta}")
+# Log the evaluation results to wandb
+wandb.log(eval_result_roberta)
+# Save the model
+model_path = "./roberta-only-10e"
+model.save_pretrained(model_path)
+tokenizer.save_pretrained(model_path)
+# Optionally, you can finish the wandb run when training is done
+wandb.finish()

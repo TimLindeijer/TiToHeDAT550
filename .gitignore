@@ -25,4 +25,4 @@ results_*/
 wandb/
 
 # Ignore weights
-clip_only_90_epochs/
+clip_only_*/
