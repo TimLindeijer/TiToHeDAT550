@@ -3,6 +3,7 @@ import json
 import random
 import os
 from PIL import Image
+import wandb
 
 import torch
 import numpy as np
@@ -25,7 +26,7 @@ def split_json(data):
 def read_data(file_path):
     print('Reading data')
     image_data = []
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='utf-8') as file:
         for line in file:
             json_obj = json.loads(line)
             image = split_json(json_obj)
@@ -62,20 +63,18 @@ class CLIPDataset(torch.utils.data.Dataset):
         }
 
 def bootstrap_test(test_path, model_path, folder_path):
+    print("Starting bootstrap test")
     # CLIP ViT model
-    model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+    # Define the CLIP config
+    config = CLIPConfig.from_pretrained("openai/clip-vit-base-patch32")
 
-    # Define the fine-tuning configuration
-    config = CLIPConfig(
-        text_config=model.text_model.config.to_dict(),
-        vision_config=model.vision_model.config.to_dict(),
-        projection_dim=512,
-        logit_scale_init_value=2.6592,
-    )
-
-    # Load the model
+    # Load the fine-tuned model
     fine_tuned_model = CLIPModel(config)
-    fine_tuned_model.load_state_dict(torch.load(model_path))
+    state_dict = torch.load(model_path)
+    fine_tuned_model.load_state_dict(state_dict, strict=False)  # Set strict=False to ignore unexpected keys
+
+    # Recreate the classification head used during fine-tuning
+    fine_tuned_model.classification_head = torch.nn.Linear(1024, 1)
     fine_tuned_model.eval()
 
     # Read test data
@@ -97,7 +96,8 @@ def bootstrap_test(test_path, model_path, folder_path):
     # Bootstrap test
     n_bootstrap_samples = 1000
     bootstrap_accuracies = []
-
+    print("Running bootstrap test")
+    wandb.init(project="dat550-multimodal", name="clip-only-90epochs-bootstrap")
     for _ in range(n_bootstrap_samples):
         # Sample with replacement from the test set
         bootstrap_sample = [random.choice(test_image_data) for _ in range(len(test_image_data))]
@@ -119,6 +119,8 @@ def bootstrap_test(test_path, model_path, folder_path):
 
         # Compute the accuracy and add it to the list of bootstrap accuracies
         bootstrap_accuracy = total_correct / total_count
+        print(f"Accuracy: {bootstrap_accuracy}")
+        wandb.log({"Bootstrap Accuracy": bootstrap_accuracy})
         bootstrap_accuracies.append(bootstrap_accuracy)
 
     # Compute the mean and standard deviation of the bootstrap accuracies
@@ -127,10 +129,9 @@ def bootstrap_test(test_path, model_path, folder_path):
 
     print(f"Mean accuracy: {mean_accuracy}")
     print(f"Standard deviation of accuracy: {std_accuracy}")
-
+    wandb.finish()
 if __name__ == "__main__":
     folder_path = 'data/CT23_1A_checkworthy_multimodal_english_v2'
-    test_path = folder_path + '/CT23_1A_checkworthy_multimodal_english_test.jsonl'
-    model_path = "clip_only_90_epochs_kfold/fine_tuned_model_epoch.pth"
-    folder_path = "path_to_your_folder"
+    test_path = folder_path + '/CT23_1A_checkworthy_multimodal_english_dev_test.jsonl'
+    model_path = "clip_only_90_epochs/fine_tuned_model_epoch.pth"
     bootstrap_test(test_path, model_path, folder_path)

@@ -3,6 +3,10 @@ from transformers import RobertaTokenizer, RobertaForSequenceClassification, Tra
 from torch.utils.data import Dataset
 import json
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
+import random
+import wandb
+
 
 # Define a dataset class
 class TextDataset(Dataset):
@@ -50,23 +54,23 @@ def read_data(file_path):
     print('Finished reading data')
     return text_data
 
-test_text_data = read_data(train_path)
 
 def main(test_data_path, model_path):
-    # Load the test data
-    with open(test_data_path, 'r') as file:
-        test_data = [json.loads(line) for line in file]
+
+    test_text_data = read_data(test_data_path)
 
     # Load the tokenizer and model
     tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
     model = RobertaForSequenceClassification.from_pretrained(model_path)
 
     # Process the inputs
-    inputs_text_test = tokenizer([data['text'] for data in test_data], return_tensors="pt", padding=True, truncation=True, max_length=512)
+    inputs_text_test = tokenizer([data['text'] for data in test_text_data], return_tensors="pt", padding=True, truncation=True, max_length=512)
 
     # Create the test dataset
-    test_labels = [data['class_label'] for data in test_data]
-    test_dataset = TextDataset(inputs_text_test, test_labels)
+    test_labels = [data['class_label'] for data in test_text_data]
+    le = LabelEncoder()
+    test_labels_num = le.fit_transform(test_labels)
+    test_dataset = TextDataset(inputs_text_test, test_labels_num)
 
     # Evaluate the model on test data
     trainer = Trainer(
@@ -74,12 +78,40 @@ def main(test_data_path, model_path):
         compute_metrics=compute_metrics
     )
 
-    eval_result = trainer.evaluate(test_dataset)
+    n_bootstrap_samples = 1000
+    bootstrap_accuracies = []
+    print("Running bootstrap test")
+    wandb.init(project="dat550-multimodal", name="roberta-only-10epochs-bootstrap")
+    for _ in range(n_bootstrap_samples):
+        # Sample with replacement from the test set
+        bootstrap_sample = [random.choice(test_text_data) for _ in range(len(test_text_data))]
 
-    # Print the evaluation results
-    print(f"Evaluation result: {eval_result}")
+        # Process the inputs
+        inputs_text_bootstrap = tokenizer([data['text'] for data in bootstrap_sample], return_tensors="pt", padding=True, truncation=True, max_length=512)
+
+        # Create the bootstrap dataset
+        bootstrap_labels = [data['class_label'] for data in bootstrap_sample]
+        bootstrap_labels_num = le.transform(bootstrap_labels)  # Use transform instead of fit_transform to keep the same encoding
+        bootstrap_dataset = TextDataset(inputs_text_bootstrap, bootstrap_labels_num)
+
+        # Evaluate the model on the bootstrap sample
+        eval_result = trainer.evaluate(bootstrap_dataset)
+
+        # Add the accuracy to the list of bootstrap accuracies
+        bootstrap_accuracies.append(eval_result['eval_accuracy'])
+
+        # Log the accuracy to wandb
+        wandb.log({"Bootstrap Accuracy": eval_result['eval_accuracy']})
+
+    # Compute the mean and standard deviation of the bootstrap accuracies
+    mean_accuracy = np.mean(bootstrap_accuracies)
+    std_accuracy = np.std(bootstrap_accuracies)
+
+    print(f"Mean accuracy: {mean_accuracy}")
+    print(f"Standard deviation of accuracy: {std_accuracy}")
 
 if __name__ == "__main__":
-    test_data_path = 'data/CT23_1A_checkworthy_multimodal_english_v2/CT23_1A_checkworthy_multimodal_english_test.jsonl'
-    model_path = './results_roberta'  # Path to the trained model
-    main(test_data_path, model_path)
+    folder_path = 'data/CT23_1A_checkworthy_multimodal_english_v2'
+    test_path = folder_path + '/CT23_1A_checkworthy_multimodal_english_dev_test.jsonl'
+    model_path = './results_roberta/checkpoint-10500'  # Path to the trained model
+    main(test_path, model_path)
