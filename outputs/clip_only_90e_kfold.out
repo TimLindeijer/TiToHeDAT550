@@ -1,0 +1,224 @@
+CUDA is a parallel computing platform for computing on GPUs, https://developer.nvidia.com/cuda-toolkit
+prepending to __UENV: cuda-11.4.4
+setting env CUDA_HOME=/usr/local/_cuda/cuda-11.4.4_ubuntu20
+prepending to PATH: /usr/local/_cuda/cuda-11.4.4_ubuntu20/bin
+prepending to LD_LIBRARY_PATH: /usr/local/_cuda/cuda-11.4.4_ubuntu20/lib64
+
+
+A GPU-accelerated library of primitives for deep neural networks, https://developer.nvidia.com/cudnn
+prepending to __UENV: cudnn-11.4-8.2.4
+prepending to LD_LIBRARY_PATH: /usr/local/libcudnn-11.4-8.2.4/cuda/lib64
+
+
+
+Zip file extraction started
+Zip file extracted
+Reading data
+Finished reading data
+Preparing data
+wandb: Currently logged in as: tlindeijer. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.16.6
+wandb: Run data is saved locally in /mnt/beegfs/home/timlin/dat550/TiToHeDAT550/wandb/run-20240419_142719-kt3j053b
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run clip-only-90epochs-kfold
+wandb: ⭐️ View project at https://wandb.ai/tlindeijer/dat550-multimodal
+wandb: 🚀 View run at https://wandb.ai/tlindeijer/dat550-multimodal/runs/kt3j053b
+Fold 1
+Epoch 1, Loss: 0.6535632792165724
+Validation Accuracy: 0.6588983050847458
+Epoch 2, Loss: 0.6402454265093399
+Validation Accuracy: 0.6588983050847458
+Epoch 3, Loss: 0.6335074881375846
+Validation Accuracy: 0.6588983050847458
+Epoch 4, Loss: 0.628623063281431
+Validation Accuracy: 0.6588983050847458
+Epoch 5, Loss: 0.6227832153692083
+Validation Accuracy: 0.6588983050847458
+Epoch 6, Loss: 0.6181100586713371
+Validation Accuracy: 0.6610169491525424
+Epoch 7, Loss: 0.6142468311018863
+Validation Accuracy: 0.6610169491525424
+Epoch 8, Loss: 0.6101562552532908
+Validation Accuracy: 0.663135593220339
+Epoch 9, Loss: 0.6066340379795786
+Validation Accuracy: 0.6673728813559322
+Epoch 10, Loss: 0.6030463985467361
+Validation Accuracy: 0.6694915254237288
+Epoch 11, Loss: 0.5997957799394252
+Validation Accuracy: 0.6716101694915254
+Epoch 12, Loss: 0.5962705526311519
+Validation Accuracy: 0.6694915254237288
+Epoch 13, Loss: 0.5944482269933669
+Validation Accuracy: 0.6822033898305084
+Epoch 14, Loss: 0.5915669263419459
+Validation Accuracy: 0.6800847457627118
+Epoch 15, Loss: 0.5889155354540226
+Validation Accuracy: 0.6822033898305084
+Epoch 16, Loss: 0.5872586243233439
+Validation Accuracy: 0.6822033898305084
+Epoch 17, Loss: 0.5852962348420742
+Validation Accuracy: 0.6716101694915254
+Epoch 18, Loss: 0.5827297245041799
+Validation Accuracy: 0.6822033898305084
+Fold 2
+Epoch 1, Loss: 0.6578155159950256
+Validation Accuracy: 0.6836518046709129
+Epoch 2, Loss: 0.6457331988771083
+Validation Accuracy: 0.6836518046709129
+Epoch 3, Loss: 0.641028838642573
+Validation Accuracy: 0.6836518046709129
+Epoch 4, Loss: 0.6364312020398802
+Validation Accuracy: 0.6836518046709129
+Epoch 5, Loss: 0.6324895377886497
+Validation Accuracy: 0.6836518046709129
+Epoch 6, Loss: 0.6288978982779939
+Validation Accuracy: 0.6836518046709129
+Epoch 7, Loss: 0.6259366647671845
+Validation Accuracy: 0.6836518046709129
+Epoch 8, Loss: 0.6222452056609978
+Validation Accuracy: 0.7006369426751592
+Epoch 9, Loss: 0.6202334822234461
+Validation Accuracy: 0.7154989384288747
+Epoch 10, Loss: 0.6176145187879013
+Validation Accuracy: 0.70276008492569
+Epoch 11, Loss: 0.6153523012743158
+Validation Accuracy: 0.7006369426751592
+Epoch 12, Loss: 0.6122641401775812
+Validation Accuracy: 0.7239915074309978
+Epoch 13, Loss: 0.6106122499805385
+Validation Accuracy: 0.7133757961783439
+Epoch 14, Loss: 0.6085989667197406
+Validation Accuracy: 0.721868365180467
+Epoch 15, Loss: 0.6066521532454733
+Validation Accuracy: 0.7346072186836518
+Epoch 16, Loss: 0.6048811982243748
+Validation Accuracy: 0.7239915074309978
+Epoch 17, Loss: 0.6033483374927003
+Validation Accuracy: 0.7346072186836518
+Epoch 18, Loss: 0.6018649127523777
+Validation Accuracy: 0.7367303609341825
+Fold 3
+Epoch 1, Loss: 0.6505532961780742
+Validation Accuracy: 0.6602972399150743
+Epoch 2, Loss: 0.6406666585954569
+Validation Accuracy: 0.6602972399150743
+Epoch 3, Loss: 0.6347269395650443
+Validation Accuracy: 0.6602972399150743
+Epoch 4, Loss: 0.6288618394884012
+Validation Accuracy: 0.6602972399150743
+Epoch 5, Loss: 0.6246637499938577
+Validation Accuracy: 0.6602972399150743
+Epoch 6, Loss: 0.6201126636084864
+Validation Accuracy: 0.6624203821656051
+Epoch 7, Loss: 0.6166728108616198
+Validation Accuracy: 0.6624203821656051
+Epoch 8, Loss: 0.6127906350766198
+Validation Accuracy: 0.6666666666666666
+Epoch 9, Loss: 0.6095372751607733
+Validation Accuracy: 0.6772823779193206
+Epoch 10, Loss: 0.6065562251260725
+Validation Accuracy: 0.6751592356687898
+Epoch 11, Loss: 0.6036081990953219
+Validation Accuracy: 0.6709129511677282
+Epoch 12, Loss: 0.6019901794902349
+Validation Accuracy: 0.6836518046709129
+Epoch 13, Loss: 0.5990810111417608
+Validation Accuracy: 0.6857749469214437
+Epoch 14, Loss: 0.5964552315614992
+Validation Accuracy: 0.6878980891719745
+Epoch 15, Loss: 0.5947500280404495
+Validation Accuracy: 0.6942675159235668
+Epoch 16, Loss: 0.5928013031765565
+Validation Accuracy: 0.6963906581740976
+Epoch 17, Loss: 0.5911089404154632
+Validation Accuracy: 0.6963906581740976
+Epoch 18, Loss: 0.5891403313410484
+Validation Accuracy: 0.6985138004246284
+Fold 4
+Epoch 1, Loss: 0.6510436646008896
+Validation Accuracy: 0.6220806794055201
+Epoch 2, Loss: 0.6335568842241319
+Validation Accuracy: 0.6220806794055201
+Epoch 3, Loss: 0.6266429585925604
+Validation Accuracy: 0.6220806794055201
+Epoch 4, Loss: 0.6202235110735489
+Validation Accuracy: 0.6220806794055201
+Epoch 5, Loss: 0.614702755111759
+Validation Accuracy: 0.6284501061571125
+Epoch 6, Loss: 0.6098905190572901
+Validation Accuracy: 0.6284501061571125
+Epoch 7, Loss: 0.6048160528732558
+Validation Accuracy: 0.6326963906581741
+Epoch 8, Loss: 0.6007861697067649
+Validation Accuracy: 0.643312101910828
+Epoch 9, Loss: 0.5965012397806523
+Validation Accuracy: 0.6581740976645435
+Epoch 10, Loss: 0.5929132548429198
+Validation Accuracy: 0.6539278131634819
+Epoch 11, Loss: 0.5900913820428363
+Validation Accuracy: 0.6645435244161358
+Epoch 12, Loss: 0.5868592171345727
+Validation Accuracy: 0.6581740976645435
+Epoch 13, Loss: 0.5841819704589197
+Validation Accuracy: 0.673036093418259
+Epoch 14, Loss: 0.5810824536671073
+Validation Accuracy: 0.6687898089171974
+Epoch 15, Loss: 0.5791502231258457
+Validation Accuracy: 0.6772823779193206
+Epoch 16, Loss: 0.5767780092813201
+Validation Accuracy: 0.6687898089171974
+Epoch 17, Loss: 0.5749600837796421
+Validation Accuracy: 0.6772823779193206
+Epoch 18, Loss: 0.5731031121843952
+Validation Accuracy: 0.6836518046709129
+Fold 5
+Epoch 1, Loss: 0.6484323881440244
+Validation Accuracy: 0.6348195329087049
+Epoch 2, Loss: 0.6358164831743403
+Validation Accuracy: 0.6348195329087049
+Epoch 3, Loss: 0.6289599598464319
+Validation Accuracy: 0.6348195329087049
+Epoch 4, Loss: 0.6245175802101524
+Validation Accuracy: 0.6348195329087049
+Epoch 5, Loss: 0.6187607211581732
+Validation Accuracy: 0.6348195329087049
+Epoch 6, Loss: 0.6138092688584732
+Validation Accuracy: 0.6348195329087049
+Epoch 7, Loss: 0.608909034122855
+Validation Accuracy: 0.6602972399150743
+Epoch 8, Loss: 0.6061320380639221
+Validation Accuracy: 0.6560509554140127
+Epoch 9, Loss: 0.6000895833565016
+Validation Accuracy: 0.6326963906581741
+Epoch 10, Loss: 0.5993173571966462
+Validation Accuracy: 0.6602972399150743
+Epoch 11, Loss: 0.5951370632244368
+Validation Accuracy: 0.6645435244161358
+Epoch 12, Loss: 0.5917212660029784
+Validation Accuracy: 0.6645435244161358
+Epoch 13, Loss: 0.5887990856574754
+Validation Accuracy: 0.6666666666666666
+Epoch 14, Loss: 0.5861075515464201
+Validation Accuracy: 0.6687898089171974
+Epoch 15, Loss: 0.5839394487566867
+Validation Accuracy: 0.6687898089171974
+Epoch 16, Loss: 0.5816357150926428
+Validation Accuracy: 0.6751592356687898
+Epoch 17, Loss: 0.5797838285817938
+Validation Accuracy: 0.6772823779193206
+Epoch 18, Loss: 0.5781720745361457
+Validation Accuracy: 0.673036093418259
+wandb: - 3.942 MB of 577.233 MB uploadedwandb: \ 32.160 MB of 577.243 MB uploadedwandb: | 33.629 MB of 577.243 MB uploadedwandb: / 74.186 MB of 577.243 MB uploadedwandb: - 113.686 MB of 577.243 MB uploadedwandb: \ 153.671 MB of 577.243 MB uploadedwandb: | 193.608 MB of 577.243 MB uploadedwandb: / 229.796 MB of 577.243 MB uploadedwandb: - 269.843 MB of 577.243 MB uploadedwandb: \ 309.780 MB of 577.243 MB uploadedwandb: | 349.264 MB of 577.243 MB uploadedwandb: / 388.343 MB of 577.243 MB uploadedwandb: - 428.327 MB of 577.243 MB uploadedwandb: \ 468.327 MB of 577.243 MB uploadedwandb: | 508.311 MB of 577.243 MB uploadedwandb: / 543.702 MB of 577.243 MB uploadedwandb: - 543.702 MB of 577.243 MB uploadedwandb: \ 577.243 MB of 577.243 MB uploadedwandb:                                                                                
+wandb: 
+wandb: Run history:
+wandb:          Train Loss █▆▅▄▃▃▂▂█▇▆▅▅▄▄▃▇▆▅▄▄▃▃▂▇▅▄▃▃▂▁▁▆▅▄▄▃▂▂▁
+wandb: Validation Accuracy ▃▃▃▃▄▄▅▅▅▅▅▆▆▇▇█▃▃▄▄▄▅▅▆▁▁▁▂▃▄▄▄▂▂▂▃▄▄▄▄
+wandb: 
+wandb: Run summary:
+wandb:          Train Loss 0.57817
+wandb: Validation Accuracy 0.67304
+wandb: 
+wandb: 🚀 View run clip-only-90epochs-kfold at: https://wandb.ai/tlindeijer/dat550-multimodal/runs/kt3j053b
+wandb: ⭐️ View project at: https://wandb.ai/tlindeijer/dat550-multimodal
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 1 other file(s)
+wandb: Find logs at: ./wandb/run-20240419_142719-kt3j053b/logs

@@ -1,0 +1,22 @@
+CUDA is a parallel computing platform for computing on GPUs, https://developer.nvidia.com/cuda-toolkit
+prepending to __UENV: cuda-11.4.4
+setting env CUDA_HOME=/usr/local/_cuda/cuda-11.4.4_ubuntu20
+prepending to PATH: /usr/local/_cuda/cuda-11.4.4_ubuntu20/bin
+prepending to LD_LIBRARY_PATH: /usr/local/_cuda/cuda-11.4.4_ubuntu20/lib64
+
+
+A GPU-accelerated library of primitives for deep neural networks, https://developer.nvidia.com/cudnn
+prepending to __UENV: cudnn-11.4-8.2.4
+prepending to LD_LIBRARY_PATH: /usr/local/libcudnn-11.4-8.2.4/cuda/lib64
+
+
+
+Traceback (most recent call last):
+  File "/mnt/beegfs/home/timlin/dat550/TiToHeDAT550/bootstrap.py", line 136, in <module>
+    bootstrap_test(test_path, model_path, folder_path)
+  File "/mnt/beegfs/home/timlin/dat550/TiToHeDAT550/bootstrap.py", line 78, in bootstrap_test
+    fine_tuned_model.load_state_dict(torch.load(model_path))
+  File "/home/stud/timlin/.conda/envs/torch550/lib/python3.11/site-packages/torch/nn/modules/module.py", line 2153, in load_state_dict
+    raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
+RuntimeError: Error(s) in loading state_dict for CLIPModel:
+	Unexpected key(s) in state_dict: "classification_head.weight", "classification_head.bias". 
