@@ -78,10 +78,10 @@ def main(test_data_path, model_path):
         compute_metrics=compute_metrics
     )
 
-    n_bootstrap_samples = 1000
+    n_bootstrap_samples = 100
     bootstrap_accuracies = []
     print("Running bootstrap test")
-    wandb.init(project="dat550-multimodal", name="roberta-only-10epochs-bootstrap")
+    wandb.init(project="dat550-multimodal", name="roberta-only-10epochs-bootstrap-100")
     for _ in range(n_bootstrap_samples):
         # Sample with replacement from the test set
         bootstrap_sample = [random.choice(test_text_data) for _ in range(len(test_text_data))]

@@ -3,7 +3,7 @@
 import os
 import zipfile
 import json
-
+import re
 from PIL import Image
 import requests
 import torch
@@ -40,9 +40,25 @@ zip_extration(folder_path, zip_file_path)
 train_path = folder_path + '/CT23_1A_checkworthy_multimodal_english_train.jsonl'
 test_path = folder_path + '/CT23_1A_checkworthy_multimodal_english_test.jsonl'
 
+def clean_text(text):
+    # Remove URLs
+    text = re.sub(r'http\S+|www.\S+', '', text)
+
+    # Remove newline characters
+    text = text.replace('\n', ' ')
+
+    # Remove non-alphanumeric characters
+    text = re.sub(r'\W', ' ', text)
+
+    # Replace multiple spaces with a single space
+    text = re.sub(r'\s+', ' ', text)
+
+    return text.strip()  # Remove leading and trailing spaces
+
 def split_json(data):
+    cleaned_text = clean_text(data['tweet_text'] + data['ocr_text'])
     image_data = {
-        'text': data['tweet_text'] + data['ocr_text'],
+        'text': cleaned_text,
         'label': data['class_label'],
         'image_path': data['image_path']
         # 'url': data['image_url']
@@ -56,13 +72,14 @@ def split_json(data):
 def read_data(file_path):
     print('Reading data')
     image_data = []
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='utf-8') as file:
         for line in file:
             json_obj = json.loads(line)
             image = split_json(json_obj)
             image_data.append(image)
     print('Finished reading data')
     return image_data
+
 
 train_image_data = read_data(train_path)
 
@@ -118,7 +135,7 @@ n_folds = 5
 # Create a KFold object
 kf = KFold(n_splits=n_folds)
 
-wandb.init(project="dat550-multimodal", name="clip-only-90epochs-kfold")
+wandb.init(project="dat550-multimodal", name="clip-only-90epochs-kfold-cleaned-wo-conf")
 # For each fold, create a training and validation dataset and dataloader
 for fold, (train_index, val_index) in enumerate(kf.split(train_image_data)):
     print(f"Fold {fold + 1}")
@@ -134,18 +151,18 @@ for fold, (train_index, val_index) in enumerate(kf.split(train_image_data)):
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=32)
 
     # CLIP ViT model
-    model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+    fine_tuned_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 
     # Define the fine-tuning configuration
-    config = CLIPConfig(
-        text_config=model.text_model.config.to_dict(),
-        vision_config=model.vision_model.config.to_dict(),
-        projection_dim=512,
-        logit_scale_init_value=2.6592,
-    )
+    # config = CLIPConfig(
+    #     text_config=model.text_model.config.to_dict(),
+    #     vision_config=model.vision_model.config.to_dict(),
+    #     projection_dim=512,
+    #     logit_scale_init_value=2.6592,
+    # )
 
     # Instantiate the fine-tuned CLIP model
-    fine_tuned_model = CLIPModel(config)
+    # fine_tuned_model = CLIPModel(config)
 
     # Freeze the pre-trained model parameters
     for param in fine_tuned_model.parameters():
@@ -198,7 +215,11 @@ for fold, (train_index, val_index) in enumerate(kf.split(train_image_data)):
         print(f"Validation Accuracy: {val_accuracy}")
         wandb.log({"Validation Accuracy": val_accuracy})
 
-        save_path = 'clip_only_90_epochs_kfold'
+        save_path = 'clip_only_90_epochs_kfold_wo_conf'
+        if not os.path.exists(save_path):
+            # Create a new directory because it does not exist
+            os.makedirs(save_path)
+            print("The new directory is created!")
 
         torch.save(fine_tuned_model.state_dict(), f"{save_path}/fine_tuned_model_epoch.pth")
         wandb.save(f"{save_path}/fine_tuned_model_epoch.pth")

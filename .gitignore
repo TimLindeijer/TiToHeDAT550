@@ -26,3 +26,6 @@ wandb/
 
 # Ignore weights
 clip_only_*/
+
+# Ignore csv files
+*.csv
