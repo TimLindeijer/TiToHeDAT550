@@ -6,6 +6,8 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 import random
 import wandb
+from sklearn.metrics import precision_score, recall_score, f1_score
+
 
 
 # Define a dataset class
@@ -46,7 +48,7 @@ def split_json(data):
 def read_data(file_path):
     print('Reading data')
     text_data = []
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='utf-8') as file:
         for line in file:
             json_obj = json.loads(line)
             text = split_json(json_obj)
@@ -79,7 +81,12 @@ def main(test_data_path, model_path):
     )
 
     n_bootstrap_samples = 100
+    all_labels = np.array([])
+    all_preds = np.array([])
     bootstrap_accuracies = []
+    bootstrap_precisions = []
+    bootstrap_recalls = []
+    bootstrap_f1_scores = []
     print("Running bootstrap test")
     wandb.init(project="dat550-multimodal", name="roberta-only-10epochs-bootstrap-100")
     for _ in range(n_bootstrap_samples):
@@ -92,23 +99,70 @@ def main(test_data_path, model_path):
         # Create the bootstrap dataset
         bootstrap_labels = [data['class_label'] for data in bootstrap_sample]
         bootstrap_labels_num = le.transform(bootstrap_labels)  # Use transform instead of fit_transform to keep the same encoding
+        bootstrap_labels_num = bootstrap_labels_num.astype(np.int64)
         bootstrap_dataset = TextDataset(inputs_text_bootstrap, bootstrap_labels_num)
 
         # Evaluate the model on the bootstrap sample
         eval_result = trainer.evaluate(bootstrap_dataset)
 
+        # Predict the labels for the bootstrap sample
+        predictions, _, _ = trainer.predict(bootstrap_dataset)
+
+        # Add the labels to all_labels
+        all_labels = np.concatenate((all_labels, bootstrap_labels_num))
+
+        # Convert the predictions to a numpy array and add them to all_preds
+        all_preds = np.concatenate((all_preds, np.argmax(predictions, axis=-1)))
+
         # Add the accuracy to the list of bootstrap accuracies
         bootstrap_accuracies.append(eval_result['eval_accuracy'])
+        # Convert lists to numpy arrays
+        all_labels = torch.Tensor(all_labels).long()
+        all_preds = np.array(all_preds)
+
+        # Compute precision, recall, and F1 score
+        precision = precision_score(all_labels.numpy(), all_preds, zero_division=0)
+        recall = recall_score(all_labels.numpy(), all_preds, zero_division=0)
+        f1 = f1_score(all_labels.numpy(), all_preds, zero_division=0)
+
+        print(f"Accuracy: {eval_result['eval_accuracy']}")
+        print(f"Precision: {precision}")
+        print(f"Recall: {recall}")
+        print(f"F1 score: {f1}")
+
+        bootstrap_precisions.append(precision)
+        bootstrap_recalls.append(recall)
+        bootstrap_f1_scores.append(f1)
 
         # Log the accuracy to wandb
         wandb.log({"Bootstrap Accuracy": eval_result['eval_accuracy']})
+        # Log precision, recall, and F1 score to wandb
+        wandb.log({"Precision": precision, "Recall": recall, "F1 Score": f1})
 
     # Compute the mean and standard deviation of the bootstrap accuracies
     mean_accuracy = np.mean(bootstrap_accuracies)
     std_accuracy = np.std(bootstrap_accuracies)
 
+    mean_precision = np.mean(bootstrap_precisions)
+    std_precision = np.std(bootstrap_precisions)
+
+    mean_recall = np.mean(bootstrap_recalls)
+    std_recall = np.std(bootstrap_recalls)
+
+    mean_f1 = np.mean(bootstrap_f1_scores)
+    std_f1 = np.std(bootstrap_f1_scores)
+
     print(f"Mean accuracy: {mean_accuracy}")
     print(f"Standard deviation of accuracy: {std_accuracy}")
+
+    print(f"Mean precision: {mean_precision}")
+    print(f"Standard deviation of precision: {std_precision}")
+
+    print(f"Mean recall: {mean_recall}")
+    print(f"Standard deviation of recall: {std_recall}")
+
+    print(f"Mean F1 score: {mean_f1}")
+    print(f"Standard deviation of F1 score: {std_f1}")
 
 if __name__ == "__main__":
     folder_path = 'data/CT23_1A_checkworthy_multimodal_english_v2'

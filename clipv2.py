@@ -209,7 +209,7 @@ for epoch in range(90):
         print(f"Validation Accuracy: {val_accuracy}")
         wandb.log({"Validation Accuracy": val_accuracy})
 
-        save_path = 'clip_only_90_epochs_kfold_wo_conf'
+        save_path = 'clip_only_90_epochs_wo_conf'
         if not os.path.exists(save_path):
             # Create a new directory because it does not exist
             os.makedirs(save_path)
