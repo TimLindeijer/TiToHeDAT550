@@ -69,8 +69,8 @@ def bootstrap_test(test_path, model_path, folder_path):
 
     # Load the fine-tuned model
     fine_tuned_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-    state_dict = torch.load(model_path)
-    fine_tuned_model.load_state_dict(state_dict, strict=False)  # Set strict=False to ignore unexpected keys
+    # state_dict = torch.load(model_path)
+    # fine_tuned_model.load_state_dict(state_dict, strict=False)  # Set strict=False to ignore unexpected keys
 
     # Recreate the classification head used during fine-tuning
     fine_tuned_model.classification_head = torch.nn.Linear(1024, 1)
@@ -99,7 +99,7 @@ def bootstrap_test(test_path, model_path, folder_path):
     bootstrap_recalls = []
     bootstrap_f1_scores = []
     print("Running bootstrap test")
-    wandb.init(project="dat550-multimodal", name="clip-only-90epochs-bootstrap-wo-conf")
+    wandb.init(project="dat550-multimodal", name="clip-only-bootstrap")
     for _ in range(n_bootstrap_samples):
         # Sample with replacement from the test set
         bootstrap_sample = [random.choice(test_image_data) for _ in range(len(test_image_data))]
@@ -174,5 +174,5 @@ def bootstrap_test(test_path, model_path, folder_path):
 if __name__ == "__main__":
     folder_path = 'data/CT23_1A_checkworthy_multimodal_english_v2'
     test_path = folder_path + '/CT23_1A_checkworthy_multimodal_english_dev_test.jsonl'
-    model_path = "clip_only_90_epochs_kfold_wo_conf/fine_tuned_model_epoch.pth"
+    model_path = "clip_only_90_epochs_wo_conf/fine_tuned_model_epoch.pth"
     bootstrap_test(test_path, model_path, folder_path)
