@@ -8,7 +8,6 @@ from PIL import Image
 import requests
 import torch
 import wandb
-from sklearn.model_selection import KFold
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 from transformers import CLIPProcessor, CLIPModel, CLIPConfig
@@ -83,6 +82,7 @@ def read_data(file_path):
 
 train_image_data = read_data(train_path)
 
+
 # Convert labels to numerical values
 le = LabelEncoder()
 
@@ -129,93 +129,87 @@ class CLIPDataset(torch.utils.data.Dataset):
         }
 
 
-# Define the number of folds
-n_folds = 5
 
-# Create a KFold object
-kf = KFold(n_splits=n_folds)
 
-wandb.init(project="dat550-multimodal", name="clip-only-90epochs-kfold-cleaned-wo-conf")
-# For each fold, create a training and validation dataset and dataloader
-for fold, (train_index, val_index) in enumerate(kf.split(train_image_data)):
-    print(f"Fold {fold + 1}")
+# Split the data into training and validation sets
+train_data, val_data = train_test_split(
+    train_image_data, test_size=0.2, random_state=42
+)
+
+train_dataset = CLIPDataset(train_data, folder_path)
+val_dataset = CLIPDataset(val_data, folder_path)
+
+
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=32, shuffle=True)
+val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=32)
+
+# CLIP ViT model
+fine_tuned_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+
+# Define the fine-tuning configuration
+# config = CLIPConfig(
+#     text_config=model.text_model.config.to_dict(),
+#     vision_config=model.vision_model.config.to_dict(),
+#     projection_dim=512,
+#     logit_scale_init_value=2.6592,
+# )
+
+# Instantiate the fine-tuned CLIP model
+# fine_tuned_model = CLIPModel(config)
+
+# Freeze the pre-trained model parameters
+for param in fine_tuned_model.parameters():
+    param.requires_grad = False
+
+# Define the fine-tuning head
+# fine_tuned_model.classification_head = torch.nn.Linear(config.projection_dim, 2)
+fine_tuned_model.classification_head = torch.nn.Linear(1024, 1)
+# Define the optimizer and training loop
+optimizer = AdamW(fine_tuned_model.classification_head.parameters(), lr=1e-3)
+loss_fn = torch.nn.BCEWithLogitsLoss()
+
+wandb.init(project="dat550-multimodal", name="clip-only-90epochs-cleaned-wo-conf")
+
+for epoch in range(90):
+    fine_tuned_model.train()
+    train_loss = 0
+    for batch in train_loader:
+        optimizer.zero_grad()
+        outputs = fine_tuned_model(pixel_values=batch["pixel_values"], input_ids=batch["input_ids"])
+        combined_embeds = torch.cat((outputs.image_embeds, outputs.text_embeds), dim=1)
+        logits = fine_tuned_model.classification_head(combined_embeds)
+        
+        loss = loss_fn(logits.view(-1), batch["label"].float())
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(fine_tuned_model.parameters(), 1.0)  # Gradient clipping
+        optimizer.step()
+        train_loss += loss.item()
     
-    # Split the data into training and validation sets
-    train_data = [train_image_data[i] for i in train_index]
-    val_data = [train_image_data[i] for i in val_index]
+    # Print average training loss per epoch
+    avg_train_loss = train_loss / len(train_loader)
+    print(f"Epoch {epoch+1}, Loss: {avg_train_loss}")
+    wandb.log({"Train Loss": avg_train_loss})
 
-    train_dataset = CLIPDataset(train_data, folder_path)
-    val_dataset = CLIPDataset(val_data, folder_path)
-
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=32, shuffle=True)
-    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=32)
-
-    # CLIP ViT model
-    fine_tuned_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-
-    # Define the fine-tuning configuration
-    # config = CLIPConfig(
-    #     text_config=model.text_model.config.to_dict(),
-    #     vision_config=model.vision_model.config.to_dict(),
-    #     projection_dim=512,
-    #     logit_scale_init_value=2.6592,
-    # )
-
-    # Instantiate the fine-tuned CLIP model
-    # fine_tuned_model = CLIPModel(config)
-
-    # Freeze the pre-trained model parameters
-    for param in fine_tuned_model.parameters():
-        param.requires_grad = False
-
-    # Define the fine-tuning head
-    # fine_tuned_model.classification_head = torch.nn.Linear(config.projection_dim, 2)
-    fine_tuned_model.classification_head = torch.nn.Linear(1024, 1)
-    # Define the optimizer and training loop
-    optimizer = AdamW(fine_tuned_model.classification_head.parameters(), lr=1e-3)
-    loss_fn = torch.nn.BCEWithLogitsLoss()
-
-
-    for epoch in range(18):
-        fine_tuned_model.train()
-        train_loss = 0
-        for batch in train_loader:
-            optimizer.zero_grad()
+    # Evaluation phase
+    fine_tuned_model.eval()
+    total_correct = 0
+    total_count = 0
+    with torch.no_grad():
+        for batch in val_loader:
             outputs = fine_tuned_model(pixel_values=batch["pixel_values"], input_ids=batch["input_ids"])
             combined_embeds = torch.cat((outputs.image_embeds, outputs.text_embeds), dim=1)
             logits = fine_tuned_model.classification_head(combined_embeds)
-            
-            loss = loss_fn(logits.view(-1), batch["label"].float())
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(fine_tuned_model.parameters(), 1.0)  # Gradient clipping
-            optimizer.step()
-            train_loss += loss.item()
         
-        # Print average training loss per epoch
-        avg_train_loss = train_loss / len(train_loader)
-        print(f"Epoch {epoch+1}, Loss: {avg_train_loss}")
-        wandb.log({"Train Loss": avg_train_loss})
-
-        # Evaluation phase
-        fine_tuned_model.eval()
-        total_correct = 0
-        total_count = 0
-        with torch.no_grad():
-            for batch in val_loader:
-                outputs = fine_tuned_model(pixel_values=batch["pixel_values"], input_ids=batch["input_ids"])
-                combined_embeds = torch.cat((outputs.image_embeds, outputs.text_embeds), dim=1)
-                logits = fine_tuned_model.classification_head(combined_embeds)
-            
-                preds = torch.sigmoid(logits.view(-1)) > 0.5  # Get binary predictions
-                total_correct += (preds == batch["label"]).sum().item()
-                total_count += preds.size(0)
-        
-        # Print validation accuracy
+            preds = torch.sigmoid(logits.view(-1)) > 0.5  # Get binary predictions
+            total_correct += (preds == batch["label"]).sum().item()
+            total_count += preds.size(0)
+    
+    # Print validation accuracy
         val_accuracy = total_correct / total_count
         print(f"Validation Accuracy: {val_accuracy}")
         wandb.log({"Validation Accuracy": val_accuracy})
 
-        save_path = 'clip_only_90_epochs_kfold_wo_conf'
+        save_path = 'clip_only_90_epochs_wo_conf'
         if not os.path.exists(save_path):
             # Create a new directory because it does not exist
             os.makedirs(save_path)
