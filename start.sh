@@ -2,8 +2,8 @@
 #SBATCH --gres=gpu:1
 #SBATCH --partition=gpuA100
 #SBATCH --time=20:00:00
-#SBATCH --job-name=bootrob
-#SBATCH --output=outputs/roberta_only_10e_bootstrap.out
+#SBATCH --job-name=btrb
+#SBATCH --output=outputs/roberta_only_test_bootstrap.out
  
 # Activate environment
 uenv verbose cuda-11.4.4 cudnn-11.4-8.2.4
@@ -17,4 +17,7 @@ PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 # Run the Python script that uses the GPU
 # python -u roberta_train.py
 # python -u clip_train.py
-python -u bootstrap_roberta.py
+# python -u clip_train_kfold.py
+# python -u bootstrap_roberta.py
+python -u bootstrap_roberta_llava.py
+# python -u bootstrap.py

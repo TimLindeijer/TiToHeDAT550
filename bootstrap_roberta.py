@@ -63,7 +63,7 @@ def main(test_data_path, model_path):
 
     # Load the tokenizer and model
     tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
-    model = RobertaForSequenceClassification.from_pretrained(model_path)
+    model = RobertaForSequenceClassification.from_pretrained('roberta-base')
 
     # Process the inputs
     inputs_text_test = tokenizer([data['text'] for data in test_text_data], return_tensors="pt", padding=True, truncation=True, max_length=512)
@@ -88,7 +88,7 @@ def main(test_data_path, model_path):
     bootstrap_recalls = []
     bootstrap_f1_scores = []
     print("Running bootstrap test")
-    wandb.init(project="dat550-multimodal", name="roberta-only-10epochs-bootstrap-100")
+    wandb.init(project="dat550-multimodal", name="roberta-only-bootstrap-100")
     for _ in range(n_bootstrap_samples):
         # Sample with replacement from the test set
         bootstrap_sample = [random.choice(test_text_data) for _ in range(len(test_text_data))]
@@ -108,61 +108,45 @@ def main(test_data_path, model_path):
         # Predict the labels for the bootstrap sample
         predictions, _, _ = trainer.predict(bootstrap_dataset)
 
-        # Add the labels to all_labels
-        all_labels = np.concatenate((all_labels, bootstrap_labels_num))
+        # Convert predictions to class labels
+        predicted_labels = np.argmax(predictions, axis=-1)
 
-        # Convert the predictions to a numpy array and add them to all_preds
-        all_preds = np.concatenate((all_preds, np.argmax(predictions, axis=-1)))
-
-        # Add the accuracy to the list of bootstrap accuracies
-        bootstrap_accuracies.append(eval_result['eval_accuracy'])
-        # Convert lists to numpy arrays
-        all_labels = torch.Tensor(all_labels).long()
-        all_preds = np.array(all_preds)
-
-        # Compute precision, recall, and F1 score
-        precision = precision_score(all_labels.numpy(), all_preds, zero_division=0)
-        recall = recall_score(all_labels.numpy(), all_preds, zero_division=0)
-        f1 = f1_score(all_labels.numpy(), all_preds, zero_division=0)
-
-        print(f"Accuracy: {eval_result['eval_accuracy']}")
-        print(f"Precision: {precision}")
-        print(f"Recall: {recall}")
-        print(f"F1 score: {f1}")
-
-        bootstrap_precisions.append(precision)
-        bootstrap_recalls.append(recall)
-        bootstrap_f1_scores.append(f1)
-
+        # Compute precision, recall, and F1 score for this bootstrap sample
+        precision = precision_score(bootstrap_labels_num, predicted_labels, average='weighted', zero_division=0)
+        recall = recall_score(bootstrap_labels_num, predicted_labels, average='weighted', zero_division=0)
+        f1 = f1_score(bootstrap_labels_num, predicted_labels, average='weighted', zero_division=0)
         # Log the accuracy to wandb
         wandb.log({"Bootstrap Accuracy": eval_result['eval_accuracy']})
         # Log precision, recall, and F1 score to wandb
         wandb.log({"Precision": precision, "Recall": recall, "F1 Score": f1})
 
-    # Compute the mean and standard deviation of the bootstrap accuracies
+        # Print and log the evaluation metrics
+        print(f"Accuracy: {eval_result['eval_accuracy']}")
+        print(f"Precision: {precision}")
+        print(f"Recall: {recall}")
+        print(f"F1 score: {f1}")
+
+        # Append the metrics to the lists
+        bootstrap_accuracies.append(eval_result['eval_accuracy'])
+        bootstrap_precisions.append(precision)
+        bootstrap_recalls.append(recall)
+        bootstrap_f1_scores.append(f1)
+
+    # Compute the mean and standard deviation of the evaluation metrics
     mean_accuracy = np.mean(bootstrap_accuracies)
-    std_accuracy = np.std(bootstrap_accuracies)
-
     mean_precision = np.mean(bootstrap_precisions)
-    std_precision = np.std(bootstrap_precisions)
-
     mean_recall = np.mean(bootstrap_recalls)
+    mean_f1_score = np.mean(bootstrap_f1_scores)
+    std_accuracy = np.std(bootstrap_accuracies)
+    std_precision = np.std(bootstrap_precisions)
     std_recall = np.std(bootstrap_recalls)
+    std_f1_score = np.std(bootstrap_f1_scores)
 
-    mean_f1 = np.mean(bootstrap_f1_scores)
-    std_f1 = np.std(bootstrap_f1_scores)
-
-    print(f"Mean accuracy: {mean_accuracy}")
-    print(f"Standard deviation of accuracy: {std_accuracy}")
-
-    print(f"Mean precision: {mean_precision}")
-    print(f"Standard deviation of precision: {std_precision}")
-
-    print(f"Mean recall: {mean_recall}")
-    print(f"Standard deviation of recall: {std_recall}")
-
-    print(f"Mean F1 score: {mean_f1}")
-    print(f"Standard deviation of F1 score: {std_f1}")
+    print(f"Mean Accuracy: {mean_accuracy}, Std Accuracy: {std_accuracy}")
+    print(f"Mean Precision: {mean_precision}, Std Precision: {std_precision}")
+    print(f"Mean Recall: {mean_recall}, Std Recall: {std_recall}")
+    print(f"Mean F1 Score: {mean_f1_score}, Std F1 Score: {std_f1_score}")
+    wandb.finish()
 
 if __name__ == "__main__":
     folder_path = 'data/CT23_1A_checkworthy_multimodal_english_v2'
