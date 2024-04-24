@@ -3,7 +3,7 @@
 #SBATCH --partition=gpuA100
 #SBATCH --time=20:00:00
 #SBATCH --job-name=btrb
-#SBATCH --output=outputs/roberta_only_test_bootstrap.out
+#SBATCH --output=outputs/roberta_only_bootstrap.out
  
 # Activate environment
 uenv verbose cuda-11.4.4 cudnn-11.4-8.2.4
