@@ -26,6 +26,7 @@
 - PARAMETERS: !autotrain llm --train --project-name XXX --model TinyPixel/Llama-2-7B-bf16-sharded --data-path . --use-peft --quantization int4 --lr 2e-4 --batch-size 12 --epochs 3 --trainer sft --target-modules q_proj,v_proj --push-to-hub --token XXX --repo-id XXX
 - -Inference
 - Adapter: https://huggingface.co/HWatervalley/TiToHe_mistral_model
+- NOTE: mistral was the first model tested with and the name in the link is a remnant from that
 - Model: https://huggingface.co/HWatervalley/TiToHe_tnypixel
 
 # Zero-shot
