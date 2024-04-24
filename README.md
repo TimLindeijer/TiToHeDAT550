@@ -39,5 +39,8 @@
 - Match image data with text data through id
 - Pass description and text through contro to get model label
 - Handle exceptoions i.e model label =  "I will not provide information that could be used for identity theft" manualy labeled as "yes"
-- Bootstrap metrics were done with 100 samples, 20 itterations
+- Bootstrap metrics were done with 548 samples, 100 itterations
+
+# Few-shot
+Same process as for Zero-shot, but using the few-shot modelfile
   
