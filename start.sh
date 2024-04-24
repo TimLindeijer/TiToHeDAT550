@@ -3,7 +3,7 @@
 #SBATCH --partition=gpuA100
 #SBATCH --time=20:00:00
 #SBATCH --job-name=btrb
-#SBATCH --output=outputs/roberta_only_test_bootstrap.out
+#SBATCH --output=outputs/roberta_only_bootstrap.out
  
 # Activate environment
 uenv verbose cuda-11.4.4 cudnn-11.4-8.2.4
@@ -18,6 +18,6 @@ PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 # python -u roberta_train.py
 # python -u clip_train.py
 # python -u clip_train_kfold.py
-# python -u bootstrap_roberta.py
-python -u bootstrap_roberta_llava.py
+python -u bootstrap_roberta.py
+# python -u bootstrap_roberta_llava.py
 # python -u bootstrap.py
