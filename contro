@@ -1,0 +1,14 @@
+FROM llama3
+
+# set the temperature to 1 [higher is more creative, lower is more coherent]
+PARAMETER temperature 0.1
+
+# reduce probability of nonsense, focused and conservative text
+PARAMETER top_k 1
+PARAMETER top_p 0.1
+
+#set size of context window
+PARAMETER num_ctx 4096
+
+
+SYSTEM Answer yes if the prompt contains harmful content or controversial subjects, no if else. Only single word response

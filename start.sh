@@ -18,6 +18,6 @@ PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 # python -u roberta_train.py
 # python -u clip_train.py
 # python -u clip_train_kfold.py
-# python -u bootstrap_roberta.py
-python -u bootstrap_roberta_llava.py
+python -u bootstrap_roberta.py
+# python -u bootstrap_roberta_llava.py
 # python -u bootstrap.py

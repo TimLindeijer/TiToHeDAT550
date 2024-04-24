@@ -1,0 +1,51 @@
+CUDA is a parallel computing platform for computing on GPUs, https://developer.nvidia.com/cuda-toolkit
+ error: cuda-11.4.4 is not available on gorina9
+
+
+A GPU-accelerated library of primitives for deep neural networks, https://developer.nvidia.com/cudnn
+ error: cudnn-11.4-8.2.4 is not available on gorina9
+
+
+
+Reading data
+Finished reading data
+/home/stud/timlin/.conda/envs/torch550/lib/python3.11/site-packages/accelerate/accelerator.py:436: FutureWarning: Passing the following arguments to `Accelerator` is deprecated and will be removed in version 1.0 of Accelerate: dict_keys(['dispatch_batches', 'split_batches', 'even_batches', 'use_seedable_sampler']). Please pass an `accelerate.DataLoaderConfiguration` instead: 
+dataloader_config = DataLoaderConfiguration(dispatch_batches=None, split_batches=False, even_batches=True, use_seedable_sampler=True)
+  warnings.warn(
+Running bootstrap test
+  0%|          | 0/69 [00:00<?, ?it/s]  3%|▎         | 2/69 [00:00<00:27,  2.46it/s]  4%|▍         | 3/69 [00:01<00:40,  1.65it/s]  6%|▌         | 4/69 [00:02<00:47,  1.36it/s]  7%|▋         | 5/69 [00:03<00:47,  1.34it/s]  9%|▊         | 6/69 [00:04<00:51,  1.21it/s] 10%|█         | 7/69 [00:05<00:52,  1.18it/s] 12%|█▏        | 8/69 [00:06<00:52,  1.16it/s] 13%|█▎        | 9/69 [00:06<00:50,  1.19it/s] 14%|█▍        | 10/69 [00:07<00:50,  1.17it/s] 16%|█▌        | 11/69 [00:08<00:47,  1.21it/s] 17%|█▋        | 12/69 [00:09<00:46,  1.23it/s] 19%|█▉        | 13/69 [00:10<00:46,  1.21it/s] 20%|██        | 14/69 [00:11<00:46,  1.19it/s] 22%|██▏       | 15/69 [00:12<00:46,  1.17it/s] 23%|██▎       | 16/69 [00:12<00:45,  1.17it/s] 25%|██▍       | 17/69 [00:13<00:45,  1.15it/s] 26%|██▌       | 18/69 [00:14<00:44,  1.16it/s] 28%|██▊       | 19/69 [00:15<00:43,  1.16it/s] 29%|██▉       | 20/69 [00:16<00:40,  1.20it/s] 30%|███       | 21/69 [00:17<00:40,  1.20it/s] 32%|███▏      | 22/69 [00:17<00:38,  1.23it/s] 33%|███▎      | 23/69 [00:18<00:37,  1.21it/s] 35%|███▍      | 24/69 [00:19<00:38,  1.18it/s] 36%|███▌      | 25/69 [00:20<00:36,  1.22it/s] 38%|███▊      | 26/69 [00:21<00:35,  1.22it/s] 39%|███▉      | 27/69 [00:22<00:34,  1.21it/s] 41%|████      | 28/69 [00:22<00:34,  1.20it/s] 42%|████▏     | 29/69 [00:23<00:32,  1.24it/s] 43%|████▎     | 30/69 [00:24<00:31,  1.23it/s] 45%|████▍     | 31/69 [00:25<00:31,  1.22it/s] 46%|████▋     | 32/69 [00:26<00:31,  1.18it/s] 48%|████▊     | 33/69 [00:26<00:29,  1.22it/s] 49%|████▉     | 34/69 [00:27<00:28,  1.22it/s] 51%|█████     | 35/69 [00:28<00:27,  1.25it/s] 52%|█████▏    | 36/69 [00:29<00:27,  1.22it/s] 54%|█████▎    | 37/69 [00:30<00:26,  1.19it/s] 55%|█████▌    | 38/69 [00:31<00:26,  1.19it/s] 57%|█████▋    | 39/69 [00:31<00:25,  1.20it/s] 58%|█████▊    | 40/69 [00:32<00:23,  1.21it/s] 59%|█████▉    | 41/69 [00:33<00:23,  1.20it/s] 61%|██████    | 42/69 [00:34<00:23,  1.16it/s] 62%|██████▏   | 43/69 [00:35<00:21,  1.18it/s] 64%|██████▍   | 44/69 [00:36<00:21,  1.17it/s] 65%|██████▌   | 45/69 [00:36<00:19,  1.21it/s] 67%|██████▋   | 46/69 [00:37<00:19,  1.20it/s] 68%|██████▊   | 47/69 [00:38<00:18,  1.21it/s] 70%|██████▉   | 48/69 [00:39<00:17,  1.21it/s] 71%|███████   | 49/69 [00:40<00:16,  1.19it/s] 72%|███████▏  | 50/69 [00:41<00:16,  1.16it/s] 74%|███████▍  | 51/69 [00:42<00:15,  1.18it/s] 75%|███████▌  | 52/69 [00:42<00:14,  1.20it/s] 77%|███████▋  | 53/69 [00:43<00:13,  1.18it/s] 78%|███████▊  | 54/69 [00:44<00:12,  1.17it/s] 80%|███████▉  | 55/69 [00:45<00:11,  1.17it/s] 81%|████████  | 56/69 [00:46<00:10,  1.19it/s] 83%|████████▎ | 57/69 [00:47<00:09,  1.23it/s] 84%|████████▍ | 58/69 [00:47<00:09,  1.22it/s] 86%|████████▌ | 59/69 [00:48<00:08,  1.24it/s] 87%|████████▋ | 60/69 [00:49<00:07,  1.19it/s] 88%|████████▊ | 61/69 [00:50<00:06,  1.20it/s] 90%|████████▉ | 62/69 [00:51<00:05,  1.21it/s] 91%|█████████▏| 63/69 [00:51<00:04,  1.22it/s] 93%|█████████▎| 64/69 [00:52<00:04,  1.25it/s] 94%|█████████▍| 65/69 [00:53<00:03,  1.22it/s] 96%|█████████▌| 66/69 [00:54<00:02,  1.25it/s] 97%|█████████▋| 67/69 [00:55<00:01,  1.24it/s] 99%|█████████▊| 68/69 [00:55<00:00,  1.24it/s]100%|██████████| 69/69 [00:56<00:00,  1.25it/s]wandb: Currently logged in as: tlindeijer. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.16.6
+wandb: Run data is saved locally in /mnt/beegfs/home/timlin/dat550/TiToHeDAT550/wandb/run-20240422_204334-hx1c7qpn
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run dashing-star-4
+wandb: ⭐️ View project at https://wandb.ai/tlindeijer/huggingface
+wandb: 🚀 View run at https://wandb.ai/tlindeijer/huggingface/runs/hx1c7qpn
+100%|██████████| 69/69 [01:08<00:00,  1.00it/s]
+Traceback (most recent call last):
+  File "/mnt/beegfs/home/timlin/dat550/TiToHeDAT550/bootstrap_roberta.py", line 148, in <module>
+    main(test_path, model_path)
+  File "/mnt/beegfs/home/timlin/dat550/TiToHeDAT550/bootstrap_roberta.py", line 108, in main
+    precision = precision_score(eval_result['label_ids'], np.argmax(eval_result['predictions'], axis=-1), zero_division=0)
+                                ~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'label_ids'
+wandb: - 0.015 MB of 0.015 MB uploadedwandb: \ 0.015 MB of 0.015 MB uploadedwandb: | 0.015 MB of 0.015 MB uploadedwandb: / 0.015 MB of 0.015 MB uploadedwandb: - 0.015 MB of 0.015 MB uploadedwandb: \ 0.592 MB of 0.700 MB uploaded (0.001 MB deduped)wandb: | 0.700 MB of 0.700 MB uploaded (0.001 MB deduped)wandb: 
+wandb: Run history:
+wandb:           eval/accuracy ▁
+wandb:               eval/loss ▁
+wandb:            eval/runtime ▁
+wandb: eval/samples_per_second ▁
+wandb:   eval/steps_per_second ▁
+wandb:       train/global_step ▁
+wandb: 
+wandb: Run summary:
+wandb:           eval/accuracy 0.85766
+wandb:               eval/loss 1.37792
+wandb:            eval/runtime 59.6244
+wandb: eval/samples_per_second 9.191
+wandb:   eval/steps_per_second 1.157
+wandb:       train/global_step 0
+wandb: 
+wandb: 🚀 View run dashing-star-4 at: https://wandb.ai/tlindeijer/huggingface/runs/hx1c7qpn
+wandb: ⭐️ View project at: https://wandb.ai/tlindeijer/huggingface
+wandb: Synced 6 W&B file(s), 0 media file(s), 2 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20240422_204334-hx1c7qpn/logs
