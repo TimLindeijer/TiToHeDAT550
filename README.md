@@ -31,6 +31,12 @@
 # Zero-shot
 - Download Ollama
 - Download local LLaVA and LLaMA3 models
-- Create custom LLaMA3 model file - See "contro" for Parameters
-- 
+- Create custom LLaMA3 model - See "contro" for Parameters
+- Pre process text, get id,text and label
+- Pre process image, get id and encode images to base64
+- Pass encodings through LLaVA model to get description
+- Match image data with text data through id
+- Pass description and text through contro to get model label
+- Handle exceptoions i.e model label =  "I will not provide information that could be used for identity theft" manualy labeled as "yes"
+- Bootstrap metrics were done with 100 samples, 20 itterations
   
